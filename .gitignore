@@ -1,0 +1,20 @@
+# Archivos de usuario de Visual Studio
+.vs/
+*.user
+*.suo
+
+# Binarios y objetos
+bin/
+obj/
+out/
+*.dll
+*.exe
+
+# Configuraciones temporales
+*.vsidx
+*.dbmdl
+*.log
+
+# Paquetes de NuGet
+*.nupkg
+packages/
