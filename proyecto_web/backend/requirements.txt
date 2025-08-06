@@ -1,3 +1,5 @@
+# Para monitoreo Prometheus
+prometheus-fastapi-instrumentator
 fastapi
 uvicorn
 sqlalchemy
@@ -9,3 +11,21 @@ python-multipart
 websockets
 requests
 pydantic[email]
+
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Email support
+aiosmtplib==2.0.2
+
+# HTTP requests (for testing)
+httpx==0.25.2
+requests==2.31.0
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Utilities
+pydantic-settings==2.1.0

@@ -1,30 +1,11 @@
-import type { NextConfig } from "next";
-import webpack from "webpack";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Remover redirects automáticos - los manejaremos en el cliente
+  trailingSlash: false,
+  // Si usas App Router (opcional)
+  experimental: {
+    appDir: false, // Cambiar a true si usas app directory
+  }
+}
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-
-  images: {
-    domains: ["localhost", "example.com"], // Ajusta los dominios según tu app
-  },
-
-  webpack: (config, { isServer }) => {
-    // Solo aplica el alias en el cliente
-    if (!isServer) {
-      config.resolve.alias = {
-        ...(config.resolve.alias || {}),
-        "node:process": "process/browser",
-      };
-
-      config.plugins.push(
-        new webpack.ProvidePlugin({
-          process: "process/browser",
-        })
-      );
-    }
-
-    return config;
-  },
-};
-
-export default nextConfig;
+module.exports = nextConfig;

@@ -1,46 +1,50 @@
-// src/types/auth.ts
-export type UserRole = 'client' | 'admin' | 'employee';
+// types/auth.ts
 
-export interface UserProfile {
-  id: number;
-  email: string;
-  display_name?: string;
-  role: UserRole;
-  created_at: string;
-}
-
-export interface AuthenticatedUser {
-  id: number;
-  email: string;
-  display_name?: string;
-  role: UserRole;
-  created_at: string;
-}
-
+// Tipos de request
 export interface LoginRequest {
   email: string;
   password: string;
+  is_admin?: boolean; // Opcional para validación de rol
 }
 
 export interface RegisterRequest {
   email: string;
+  name: string;
   password: string;
-  display_name?: string;
+  is_admin: boolean;
 }
 
+export interface PasswordResetRequest {
+  email: string;
+}
+
+export interface PasswordReset {
+  token: string;
+  new_password: string;
+}
+
+export interface PasswordChange {
+  current_password: string;
+  new_password: string;
+}
+
+// Tipos de response
 export interface AuthResponse {
   access_token: string;
   token_type: string;
-  user: UserProfile;
 }
 
-export interface AuthContextType {
-  currentUser: UserProfile | null;
+export interface UserProfile {
+  id: number;
+  email: string;
+  name: string;
+  is_admin: boolean;
+}
+
+// Tipos de estado
+export interface AuthState {
+  user: UserProfile | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  register: (email: string, password: string, displayName?: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
-  hasRole: (role: UserRole) => boolean;
-  hasMinimumRole: (minimumRole: UserRole) => boolean;
+  error: string | null;
+  isAuthenticated: boolean;
 }

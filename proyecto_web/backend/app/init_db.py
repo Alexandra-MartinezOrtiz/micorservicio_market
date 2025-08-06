@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.database import engine, SessionLocal
-from app.models import user, product, cart, chat, invoice
+from app.models import user, product as product_model, cart, chat, invoice
 from app.repositories.user_repository import UserRepository
 from app.repositories.product_repository import ProductRepository
 from app.schemas.product import ProductCreate
@@ -15,7 +15,7 @@ from app.models.invoice import Invoice, InvoiceItem
 def init_db():
     # Create all tables
     user.Base.metadata.create_all(bind=engine)
-    product.Base.metadata.create_all(bind=engine)
+    product_model.Base.metadata.create_all(bind=engine)
     cart.Base.metadata.create_all(bind=engine)
     chat.Base.metadata.create_all(bind=engine)
     invoice.Base.metadata.create_all(bind=engine)
@@ -60,8 +60,8 @@ def init_db():
             ]
             
             for product_data in sample_products:
-                product = product_repo.create(product_data)
-                print(f"✅ Producto creado: {product.name} - ${product.price}")
+                created_product = product_repo.create(product_data)
+                print(f"✅ Producto creado: {created_product.name} - ${created_product.price}")
         else:
             print(f"ℹ️  Ya existen {len(existing_products)} productos en la base de datos")
             

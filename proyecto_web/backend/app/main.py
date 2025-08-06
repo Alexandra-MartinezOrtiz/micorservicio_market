@@ -1,8 +1,21 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import auth_routes, user_routes, product_routes, cart_routes, chat_routes, invoice_routes, dashboard_routes
 from app.websocket.chat import websocket_endpoint
 from app.config import CORS_ORIGINS
+from prometheus_fastapi_instrumentator import Instrumentator
+import logging
+
+
+
+# Configuración de logs estructurados
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s"
+)
+
+logger = logging.getLogger("market-backend")
 
 app = FastAPI(
     title="Backend Market JALS",
@@ -31,8 +44,10 @@ app.include_router(dashboard_routes.router, prefix="/dashboard", tags=["Dashboar
 # WebSocket endpoint
 app.add_websocket_route("/ws/chat", websocket_endpoint)
 
+
 @app.get("/")
 def root():
+    logger.info("Acceso a endpoint raíz /")
     return {
         "message": "Bienvenido al Backend Market JALS",
         "version": "1.0.0",
@@ -40,6 +55,17 @@ def root():
         "redoc": "/redoc"
     }
 
+
 @app.get("/health")
 def health_check():
+    logger.info("Health check solicitado")
     return {"status": "healthy"}
+
+
+
+# Instrumentación Prometheus
+Instrumentator().instrument(app).expose(app)
+
+# Ejemplo de log en un endpoint (puedes agregar logs similares en tus rutas y servicios)
+# logger.info("Usuario autenticado correctamente: %s", user.email)
+# logger.error("Error al autenticar usuario: %s", error)
