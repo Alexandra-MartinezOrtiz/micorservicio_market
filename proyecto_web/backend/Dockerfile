@@ -4,9 +4,12 @@ FROM python:3.10-slim
 # Definir directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema necesarias para bcrypt y compilación
 RUN apt-get update && apt-get install -y \
     build-essential \
+    gcc \
+    libffi-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements y instalar dependencias
