@@ -45,7 +45,7 @@ export default function CreateProductPage() {
     if (type === 'checkbox') {
       setFormData((prev) => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
     } else if (type === 'number') {
-      setFormData((prev) => ({ ...prev, [name]: parseFloat(value) }));
+      setFormData((prev) => ({ ...prev, [name]: value === '' ? 0 : parseFloat(value) }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -68,8 +68,16 @@ export default function CreateProductPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error creando producto.');
+        let errorMessage = 'Error creando producto.';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // Si la respuesta no es JSON, usar el texto plano
+          const text = await response.text();
+          if (text && text.length < 200 && text.startsWith('<!DOCTYPE') === false) errorMessage = text;
+        }
+        throw new Error(errorMessage);
       }
 
       setSuccess('¡Producto creado exitosamente!');
@@ -84,7 +92,7 @@ export default function CreateProductPage() {
 
       // Redirigir después de 2 segundos
       setTimeout(() => {
-        router.push('/productos');
+        router.push('/products');
       }, 2000);
     } catch (err: any) {
       console.error('Error submitting product:', err);
@@ -134,31 +142,30 @@ export default function CreateProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Header sticky y navegación */}
         <div className="mb-8">
-          <button
-            onClick={() => router.back()}
-            className="inline-flex items-center text-slate-600 hover:text-slate-900 mb-4 transition-colors duration-200"
-          >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Volver
-          </button>
           <div className="flex items-center mb-4">
-            
+            <button
+              onClick={() => router.push('/products')}
+              className="inline-flex items-center text-blue-600 hover:text-blue-900 mr-4 transition-colors duration-200"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Volver a productos
+            </button>
             <div>
               <h1 className="text-4xl font-bold text-slate-900 mb-2">Crear Nuevo Producto</h1>
               <p className="text-slate-600">Agrega un nuevo producto a tu inventario</p>
@@ -255,7 +262,7 @@ export default function CreateProductPage() {
                 type="number"
                 id="price"
                 name="price"
-                value={formData.price}
+                value={formData.price === 0 ? '' : String(formData.price)}
                 min={0}
                 step={0.01}
                 onChange={handleChange}
@@ -274,7 +281,7 @@ export default function CreateProductPage() {
                 type="number"
                 id="stock"
                 name="stock"
-                value={formData.stock}
+                value={formData.stock === 0 ? '' : String(formData.stock)}
                 min={0}
                 onChange={handleChange}
                 required

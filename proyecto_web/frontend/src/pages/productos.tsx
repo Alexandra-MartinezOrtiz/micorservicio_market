@@ -1,1 +1,6 @@
-export { default } from '../modules/productos/pages/index';
+
+import ProductsPage from '@/modules/productos/pages/index';
+
+export default function Productos() {
+  return <ProductsPage />;
+}

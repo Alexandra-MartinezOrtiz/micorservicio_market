@@ -1,7 +1,6 @@
 // src/lib/hooks/useDashboard.ts
 import { useState, useEffect, useCallback } from 'react';
-import { api } from '@/lib/services/api';
-import { ApiError } from '@/lib/services/api';
+import { API_CONFIG, authenticatedRequest } from '@/lib/api';
 
 // Tipos
 export interface DashboardStats {
@@ -26,16 +25,18 @@ export const useDashboard = () => {
   // Cargar estadísticas
   const loadStats = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
-
     try {
-      const stats = await api.dashboard.getStats();
+      // Llama directamente al endpoint usando authenticatedRequest
+      const url = API_CONFIG.BASE_URL + API_CONFIG.DASHBOARD.STATS;
+      const response = await authenticatedRequest(url);
+      const stats = await response.json();
       setState(prev => ({
         ...prev,
         stats,
         loading: false,
       }));
-    } catch (error) {
-      const errorMessage = error instanceof ApiError ? error.message : 'Error al cargar estadísticas';
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Error al cargar estadísticas';
       setState(prev => ({
         ...prev,
         loading: false,
